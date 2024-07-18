@@ -3,7 +3,7 @@ import axios from "axios";
 import Head from 'next/head';
 import { PDFDocument } from 'pdf-lib'
 import {
-    PdfViewerComponent, Navigation, LinkAnnotation, BookmarkView,
+    PdfViewerComponent, Navigation, LinkAnnotation, BookmarkView, Magnification,
     ThumbnailView, Print, TextSelection, Annotation, TextSearch, FormFields, FormDesigner, Inject
 } from '@syncfusion/ej2-react-pdfviewer';
 import { registerLicense } from '@syncfusion/ej2-base';
@@ -122,6 +122,16 @@ const ESign = () => {
             setLoading(false);
             setLoadingError(true)
         }
+    }
+
+    const getTodayDate = () => {
+        const now = new Date();
+
+        const day = ("0" + now.getDate()).slice(-2);
+        const month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+        const today = now.getFullYear() + "-" + (month) + "-" + (day);
+        return today;
     }
 
     const set_Order_Date_Fields = (fields) => {
@@ -474,6 +484,7 @@ const ESign = () => {
                                 <Inject services={[
                                     Annotation,
                                     Navigation,
+                                    Magnification,
                                     LinkAnnotation,
                                     BookmarkView,
                                     ThumbnailView,
