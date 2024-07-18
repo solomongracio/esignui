@@ -9,14 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@syncfusion/ej2-react-pdfviewer": "^26.1.42",
+    "axios": "^1.7.2",
+    "classnames": "^2.5.1",
+    "next": "14.2.5",
+    "pdf-lib": "^1.17.1",
+    "prop-types": "^15.8.1",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.5"
+    "react-modal": "^3.16.1"
   },
   "devDependencies": {
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
   }
 }
