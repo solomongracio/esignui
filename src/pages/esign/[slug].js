@@ -12,6 +12,7 @@ import Button from '../../components/Button';
 import { base64ToBytes, blobToBase64, bytesToBase64 } from '../../utils/fileConversion';
 import { useRouter } from 'next/router';
 import ReactModal from "react-modal";
+import "../../styles/globals.css"
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NCaF5cXmZCdkx3Qnxbf1x0ZFRHal5RTnJYUiweQnxTdEFjXn5WcXVXRmRUUEB/WQ==');
 
