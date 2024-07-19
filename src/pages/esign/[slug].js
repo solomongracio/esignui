@@ -58,8 +58,7 @@ const formatter = new Intl.DateTimeFormat('en-US', {
     ]
 });
 
-const ESign = () => {
-
+const ESign = ({ data }) => {
     const [pdfURL, setPdfUrl] = useState();
     const [loading, setLoading] = useState(false);
     const [agreement, setAgreement] = useState({});
@@ -78,7 +77,6 @@ const ESign = () => {
     const { slug } = router.query;
 
     useEffect(() => {
-        console.log(slug);
         if (!loading && slug) {
             getData();
         }
@@ -101,12 +99,11 @@ const ESign = () => {
 
 
     const getData = async () => {
-        console.log("getting data")
         setLoading(true);
         try {
             const response = await axios.get("https://9mvqavbmqm.ap-southeast-2.awsapprunner.com/sfAPI/loadPDF/" + slug);
 
-            // const response = await axios.get("http://localhost:9000/sfAPI/loadPDF/" + id);
+            // const response = await axios.get("http://localhost:9000/sfAPI/loadPDF/" + slug);
             setLoading(false);
             if (response.data && response.data.agreement) {
                 setAgreement(response.data.agreement);
@@ -167,7 +164,6 @@ const ESign = () => {
         fields.sort((a, b) => a.order - b.order);
         fields = fields.filter(field => !field.ReadOnly__c);
         fields = fields.map((field, ind) => ({ ...field, ind }));
-        // console.log(fields);
         setFormFields(fields);
 
     }
@@ -176,13 +172,6 @@ const ESign = () => {
         if (docViewer) {
             const fields = docViewer.retrieveFormFields();
             set_Order_Date_Fields(fields);
-            console.log(docViewer);
-            // docViewer.formDesignerModule.updateFormField(docViewer.formFieldCollections[3], { type: 'datePick' });
-
-            console.table(fields);
-            console.table(pdfFields)
-            // [fields[2], fields[3]] = [fields[3], fields[2]];
-            // setFormFields(fields);
         }
     }
 
@@ -307,9 +296,10 @@ const ESign = () => {
             size: 12
         });
 
+        let signerData;
 
         if (agreement && agreement.Signers__r && agreement.Signers__r.records && agreement.Signers__r.records[0]) {
-            const signerData = agreement.Signers__r.records[0];
+            signerData = agreement.Signers__r.records[0];
             // Signer ID
             signerPage.drawText(signerData.Id, {
                 x: 350,
@@ -326,7 +316,7 @@ const ESign = () => {
         }
 
         const date = formatter.format(new Date());
-        const ip = data.ip;
+        const ip = agreement.ipAddress;
         const userAgent = data.userAgent;
 
         signerPage.drawText(date, {
@@ -335,11 +325,14 @@ const ESign = () => {
             size: 7
         });
 
-        signerPage.drawText(ip, {
-            x: 100,
-            y: 379,
-            size: 7
-        });
+        if (ip) {
+            signerPage.drawText(ip, {
+                x: 100,
+                y: 379,
+                size: 7
+            });
+        }
+    
 
         signerPage.drawText(userAgent, {
             x: 100,
@@ -368,12 +361,17 @@ const ESign = () => {
         URL.revokeObjectURL(pdfUrl); // Revoke the temporary URL after 
         const finalpdfbase64 = bytesToBase64(pdfBytes);
 
-        // return;
         const url = "https://apim.workato.com/revaturea/s3-v1/upload-signed-document";
         const body = {
             filename: `${agreement.Id}.pdf`,
-            email: "solomon.gracio.c@revature.com",
-            data: finalpdfbase64
+            email: signerData ? signerData.Email__c : '',
+            data: finalpdfbase64,
+            agreementId: agreement.Id,
+            // status: "Accepted",
+            ipAddress: agreement.ipAddress,
+            userAgent: data.userAgent,
+            signerName: signerData ? signerData.Name : '',
+            // documentName: 
         }
         const jsonData = JSON.stringify(body);
         const options = {
@@ -442,18 +440,18 @@ const ESign = () => {
                                 </div>
                                 <div>
                                     <div className="flex justify-center pt-3 ">
-                                        <div>By proceeding, you agree that this agreement may be signed using electronic signatures.</div>
+                                        <div className="text-sm">By proceeding, you agree that this agreement may be signed using electronic signatures.</div>
                                     </div>
 
                                     <div className="flex justify-center py-3 ">
                                         {!started && <Button size="small" onClick={start} hoverColor="none">Start</Button>}
                                         {started &&
-                                            <div className="flex gap-7 w-[360px] items-center relative">
+                                            <div className="flex gap-7 w-[370px] items-center relative">
                                                 <Button size="small" hoverColor="none" onClick={goPrev} disabled={formInd === 0}>Prev</Button>
-                                                <div className="text-gray-600 min-w-[120px] text-center">Enter {formFields[formInd]?.DisplayName__c}</div>
+                                                <div className="text-gray-600 min-w-[120px] text-center text-sm">Enter {formFields[formInd]?.DisplayName__c}</div>
                                                 {formFields.length - 1 > formInd && <Button size="small" hoverColor="none" onClick={goNext} disabled={formFields.length - 1 === formInd}>Next</Button>}
                                                 {formFields.length - 1 === formInd && <Button size="small" hoverColor="none" color="darkNavy" onClick={handleSubmit} disabled={uploading}> <div className='flex items-center'> Submit</div></Button>}
-                                                {error && <div className="text-red-600 absolute -right-[270px]">{error}</div>}
+                                                {error && <div className="text-red-600 absolute -right-[260px] text-sm">{error}</div>}
                                             </div>
                                         }
 
@@ -535,4 +533,16 @@ const ESign = () => {
     )
 }
 
+
 export default ESign
+
+export async function getServerSideProps({ req }) {
+    const userAgent = req.headers["user-agent"];
+    return {
+        props: {
+            data: {
+                userAgent
+            }
+        }, 
+    };
+}
