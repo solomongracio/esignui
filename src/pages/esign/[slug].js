@@ -421,7 +421,7 @@ const ESign = ({ data }) => {
                 <div className='control-section'>
                     {loading && <div className="text-center mt-10"><Loader className="!w-10 !h-10" /></div>}
                     {
-                        ((agreement && agreement.Status__c && agreement.Status__c !== "Pending") || loadingError) && !loading ?
+                        ((agreement && agreement.Status__c && agreement.Status__c !== "Sent") || loadingError) && !loading ?
                             <div className="text-center mt-28 md:px-16">
                                 <h1 className="f-h6">
                                     The document has failed to load or has already been signed.
@@ -432,7 +432,7 @@ const ESign = ({ data }) => {
                             </div> : null
                     }
 
-                    {agreement && agreement.Status__c === "Pending" && !loadingError && pdfURL &&
+                    {agreement && agreement.Status__c === "Sent" && !loadingError && pdfURL &&
                         <div className="pt-24">
                             <div className="fixed top-0 z-10 w-full bg-white border-b">
                                 <div className='text-center py-1 border-b'>
