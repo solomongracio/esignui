@@ -59,6 +59,7 @@ const formatter = new Intl.DateTimeFormat('en-US', {
 });
 
 const ESign = ({ data }) => {
+    console.log(data);
     const [pdfURL, setPdfUrl] = useState();
     const [loading, setLoading] = useState(false);
     const [agreement, setAgreement] = useState({});
@@ -370,8 +371,8 @@ const ESign = ({ data }) => {
             status: "Accepted",
             ipAddress: agreement.ipAddress,
             userAgent: data.userAgent,
-            signerName: signerData ? signerData.Name : '',
-            // documentName: 
+            signerName: signerData ? signerData.SignerName__c : '',
+            documentName: agreement.DisplayName__c
         }
         const jsonData = JSON.stringify(body);
         const options = {
