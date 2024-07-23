@@ -367,7 +367,7 @@ const ESign = ({ data }) => {
             email: signerData ? signerData.Email__c : '',
             data: finalpdfbase64,
             agreementId: agreement.Id,
-            // status: "Accepted",
+            status: "Accepted",
             ipAddress: agreement.ipAddress,
             userAgent: data.userAgent,
             signerName: signerData ? signerData.Name : '',
