@@ -59,7 +59,7 @@ const formatter = new Intl.DateTimeFormat('en-US', {
 });
 
 const ESign = ({ data }) => {
-    console.log(data);
+    console.log(data, 'v1');
     const [pdfURL, setPdfUrl] = useState();
     const [loading, setLoading] = useState(false);
     const [agreement, setAgreement] = useState({});
@@ -277,7 +277,7 @@ const ESign = ({ data }) => {
         const signerPage = signerPages[0];
 
         // Title
-        signerPage.drawText('Master Services Agreement (Revature India and Revature)', {
+        signerPage.drawText(agreement.DisplayName__c, {
             x: 45,
             y: 535,
             size: 9
@@ -290,17 +290,20 @@ const ESign = ({ data }) => {
             size: 9
         });
 
-        // Name
-        signerPage.drawText(agreement.DisplayName__c, {
-            x: 55,
-            y: 440,
-            size: 12
-        });
+       
 
         let signerData;
 
         if (agreement && agreement.Signers__r && agreement.Signers__r.records && agreement.Signers__r.records[0]) {
             signerData = agreement.Signers__r.records[0];
+
+             // Name
+            signerPage.drawText(signerData.SignerName__c, {
+                x: 55,
+                y: 440,
+                size: 12
+            });
+            
             // Signer ID
             signerPage.drawText(signerData.Id, {
                 x: 350,
@@ -466,10 +469,10 @@ const ESign = ({ data }) => {
                                 id="container"
                                 enableHandwrittenSignature={false}
                                 signatureFieldSettings={{
-                                    signatureDialogSettings: {
-                                        // hideSaveSignature: false,
-                                        displayMode: 2
-                                    }
+                                    // signatureDialogSettings: {
+                                    //     // hideSaveSignature: false,
+                                    //     // displayMode: 2
+                                    // }
                                 }}
                                 // handWrittenSignatureSettings={{
                                 //     typeSignatureFonts: ["cursive", "fantasy", "monospace", "Roboto"]
